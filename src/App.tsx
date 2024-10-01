@@ -1,57 +1,115 @@
+// src/App.tsx
 import React, { useState, useEffect } from 'react';
 import FileExplorer from './FileExplorer';
 import NoteEditor from './NoteEditor';
-
-interface File {
-  name: string;
-  content: string;
-}
+import { FileSystemItem, Folder, Note } from './types';
+import { generateId } from './utils';
 
 const App: React.FC = () => {
-  const [files, setFiles] = useState<File[]>(() => {
-    const savedFiles = localStorage.getItem('files');
-    return savedFiles ? JSON.parse(savedFiles) : [];
+  const [fileSystem, setFileSystem] = useState<FileSystemItem[]>(() => {
+    const savedFileSystem = localStorage.getItem('fileSystem');
+    return savedFileSystem ? JSON.parse(savedFileSystem) : [];
   });
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
-  // Guardar los archivos en localStorage cada vez que cambien
+  // Guardar el sistema de archivos en localStorage cada vez que cambie
   useEffect(() => {
-    localStorage.setItem('files', JSON.stringify(files));
-  }, [files]);
+    localStorage.setItem('fileSystem', JSON.stringify(fileSystem));
+  }, [fileSystem]);
 
-  // Crear un nuevo archivo y seleccionarlo
-  const handleCreateFile = (file: File) => {
-    setFiles(prevFiles => [...prevFiles, file]);
-    setSelectedFile(file); // Seleccionar el nuevo archivo automáticamente
+  // Función para crear una nueva carpeta
+  const handleCreateFolder = (parentId: string | null, folderName: string) => {
+    const newFolder: Folder = {
+      id: generateId(),
+      name: folderName,
+      type: 'folder',
+      children: [],
+    };
+    setFileSystem(prev => addItem(prev, parentId, newFolder));
   };
 
-  // Guardar cambios en un archivo
-  const handleSaveFile = (updatedFile: File) => {
-    setFiles(prevFiles =>
-      prevFiles.map(file => (file.name === updatedFile.name ? updatedFile : file))
-    );
-    setSelectedFile(null); // Opcional: Limpiar la selección después de guardar
+  // Función para crear una nueva nota
+  const handleCreateNote = (parentId: string | null, noteName: string) => {
+    const newNote: Note = {
+      id: generateId(),
+      name: noteName,
+      type: 'file',
+      content: '',
+    };
+    setFileSystem(prev => addItem(prev, parentId, newNote));
+    setSelectedNote(newNote);
+  };
+
+  // Función para agregar un ítem al sistema de archivos
+  const addItem = (
+    items: FileSystemItem[],
+    parentId: string | null,
+    newItem: FileSystemItem
+  ): FileSystemItem[] => {
+    if (parentId === null) {
+      return [...items, newItem];
+    }
+
+    return items.map(item => {
+      if (item.type === 'folder' && item.id === parentId) {
+        return {
+          ...item,
+          children: [...item.children, newItem],
+        };
+      } else if (item.type === 'folder') {
+        return {
+          ...item,
+          children: addItem(item.children, parentId, newItem),
+        };
+      }
+      return item;
+    });
+  };
+
+  // Función para seleccionar una nota
+  const handleSelectNote = (note: Note) => {
+    setSelectedNote(note);
+  };
+
+  // Función para guardar cambios en una nota
+  const handleSaveNote = (updatedNote: Note) => {
+    setFileSystem(prev => updateNote(prev, updatedNote));
+    setSelectedNote(updatedNote);
+  };
+
+  // Función para actualizar una nota en el sistema de archivos
+  const updateNote = (items: FileSystemItem[], updatedNote: Note): FileSystemItem[] => {
+    return items.map(item => {
+      if (item.type === 'file' && item.id === updatedNote.id) {
+        return updatedNote;
+      } else if (item.type === 'folder') {
+        return {
+          ...item,
+          children: updateNote(item.children, updatedNote),
+        };
+      }
+      return item;
+    });
   };
 
   return (
     <div>
       <h1>Explorador de Archivos y Editor de Notas</h1>
-
       <div style={{ display: 'flex', gap: '20px' }}>
         {/* Explorador de archivos */}
         <div style={{ width: '30%' }}>
           <FileExplorer
-            files={files}
-            onFileSelect={setSelectedFile}
-            onCreateFile={handleCreateFile}
-            selectedFile={selectedFile} // Pasar el archivo seleccionado para resaltar
+            fileSystem={fileSystem}
+            onCreateFolder={handleCreateFolder}
+            onCreateNote={handleCreateNote}
+            onSelectNote={handleSelectNote}
           />
         </div>
 
         {/* Editor de notas */}
         <div style={{ width: '70%' }}>
-          <NoteEditor file={selectedFile} onSave={handleSaveFile} />
+          <NoteEditor note={selectedNote} onSave={handleSaveNote} />
         </div>
       </div>
     </div>

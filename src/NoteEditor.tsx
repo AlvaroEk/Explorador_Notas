@@ -1,35 +1,32 @@
+// src/NoteEditor.tsx
 import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill'; // Editor de texto enriquecido
 import 'react-quill/dist/quill.snow.css'; // Estilos de Quill
-
-interface File {
-  name: string;
-  content: string;
-}
+import { Note } from './types';
 
 interface NoteEditorProps {
-  file: File | null;
-  onSave: (updatedFile: File) => void;
+  note: Note | null;
+  onSave: (updatedNote: Note) => void;
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ file, onSave }) => {
-  const [content, setContent] = useState(file ? file.content : '');
+const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave }) => {
+  const [content, setContent] = useState(note ? note.content : '');
 
   useEffect(() => {
-    if (file) {
-      setContent(file.content);
+    if (note) {
+      setContent(note.content);
     } else {
       setContent('');
     }
-  }, [file]);
+  }, [note]);
 
-  if (!file) {
-    return <div>Selecciona un archivo para editarlo.</div>;
+  if (!note) {
+    return <div>Selecciona una nota para editarla.</div>;
   }
 
   const saveChanges = () => {
-    if (!file) return;
-    onSave({ ...file, content });
+    if (!note) return;
+    onSave({ ...note, content });
   };
 
   const modules = {
@@ -47,7 +44,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ file, onSave }) => {
 
   return (
     <div>
-      <h2>Editando: {file.name}</h2>
+      <h2>Editando: {note.name}</h2>
       <ReactQuill value={content} onChange={setContent} modules={modules} theme="snow" />
       <button onClick={saveChanges} style={{ marginTop: '10px', padding: '5px 10px' }}>
         Guardar Cambios
