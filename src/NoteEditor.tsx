@@ -1,4 +1,5 @@
 // src/NoteEditor.tsx
+
 import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill'; // Editor de texto enriquecido
 import 'react-quill/dist/quill.snow.css'; // Estilos de Quill
@@ -7,11 +8,13 @@ import { Note } from './types';
 interface NoteEditorProps {
   note: Note | null;
   onSave: (updatedNote: Note) => void;
+  onClose: () => void;
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave }) => {
+const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose }) => {
   const [content, setContent] = useState(note ? note.content : '');
 
+  // Actualizar el contenido cuando cambia la nota seleccionada
   useEffect(() => {
     if (note) {
       setContent(note.content);
@@ -21,14 +24,18 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave }) => {
   }, [note]);
 
   if (!note) {
-    return <div>Selecciona una nota para editarla.</div>;
+    return <div className="no-note-selected-message">Selecciona una nota para editarla.</div>;
   }
 
+  /**
+   * Guarda los cambios realizados en la nota y cierra el editor.
+   */
   const saveChanges = () => {
     if (!note) return;
     onSave({ ...note, content });
   };
 
+  // Configuración de la barra de herramientas de Quill
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, false] }],
@@ -42,13 +49,36 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave }) => {
     ],
   };
 
+  // Opciones de formatos disponibles
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline',
+    'align',
+    'list', 'bullet',
+    'indent',
+    'size',
+    'color', 'background',
+  ];
+
   return (
-    <div>
-      <h2>Editando: {note.name}</h2>
-      <ReactQuill value={content} onChange={setContent} modules={modules} theme="snow" />
-      <button onClick={saveChanges} style={{ marginTop: '10px', padding: '5px 10px' }}>
-        Guardar Cambios
-      </button>
+    <div className="note-editor">
+      <h2 className="editor-title">Editando: {note.name}</h2>
+      <ReactQuill
+        value={content}
+        onChange={setContent}
+        modules={modules}
+        formats={formats}
+        theme="snow"
+        className="quill-editor"
+      />
+      <div className="editor-buttons">
+        <button onClick={saveChanges} className="save-button">
+          Guardar Cambios
+        </button>
+        <button onClick={onClose} className="cancel-button">
+          Cancelar
+        </button>
+      </div>
     </div>
   );
 };

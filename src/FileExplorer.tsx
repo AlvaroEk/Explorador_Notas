@@ -1,4 +1,5 @@
 // src/FileExplorer.tsx
+
 import React, { useState } from 'react';
 import { FileSystemItem, Folder, Note } from './types';
 
@@ -7,6 +8,8 @@ interface FileExplorerProps {
   onCreateFolder: (parentId: string | null, folderName: string) => void;
   onCreateNote: (parentId: string | null, noteName: string) => void;
   onSelectNote: (note: Note) => void;
+  onDeleteItem: (id: string) => void;
+  onRenameItem: (id: string, newName: string) => void;
 }
 
 const FileExplorer: React.FC<FileExplorerProps> = ({
@@ -14,14 +17,21 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   onCreateFolder,
   onCreateNote,
   onSelectNote,
+  onDeleteItem,
+  onRenameItem,
 }) => {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [parentIdForNewFolder, setParentIdForNewFolder] = useState<string | null>(null);
   const [parentIdForNewNote, setParentIdForNewNote] = useState<string | null>(null);
   const [newFolderName, setNewFolderName] = useState('');
   const [newNoteName, setNewNoteName] = useState('');
+  const [renamingItemId, setRenamingItemId] = useState<string | null>(null);
+  const [renamingItemName, setRenamingItemName] = useState<string>('');
 
-  // Función para alternar la expansión de carpetas
+  /**
+   * Alterna la expansión de una carpeta en el explorador.
+   * @param folderId - ID de la carpeta a expandir o contraer.
+   */
   const toggleFolder = (folderId: string) => {
     const newExpandedFolders = new Set(expandedFolders);
     if (newExpandedFolders.has(folderId)) {
@@ -32,41 +42,151 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
     setExpandedFolders(newExpandedFolders);
   };
 
-  // Función para renderizar el árbol de archivos y carpetas
-  const renderFileSystem = (items: FileSystemItem[], parentId: string | null = null) => {
+  /**
+   * Inicia el proceso de renombrar un ítem.
+   * @param itemId - ID del ítem a renombrar.
+   * @param currentName - Nombre actual del ítem.
+   */
+  const startRename = (itemId: string, currentName: string) => {
+    setRenamingItemId(itemId);
+    setRenamingItemName(currentName);
+  };
+
+  /**
+   * Cancela el proceso de renombrar un ítem.
+   */
+  const cancelRename = () => {
+    setRenamingItemId(null);
+    setRenamingItemName('');
+  };
+
+  /**
+   * Maneja el renombramiento de un ítem.
+   * @param itemId - ID del ítem a renombrar.
+   */
+  const handleRename = (itemId: string) => {
+    if (!renamingItemName.trim()) {
+      alert('El nombre no puede estar vacío.');
+      return;
+    }
+    onRenameItem(itemId, renamingItemName.trim());
+    cancelRename();
+  };
+
+  /**
+   * Maneja la creación de una nueva carpeta.
+   */
+  const handleCreateFolderClick = () => {
+    if (!newFolderName.trim()) return alert('El nombre de la carpeta no puede estar vacío.');
+    onCreateFolder(parentIdForNewFolder, newFolderName.trim());
+    setNewFolderName('');
+    setParentIdForNewFolder(null);
+  };
+
+  /**
+   * Maneja la creación de una nueva nota.
+   */
+  const handleCreateNoteClick = () => {
+    if (!newNoteName.trim()) return alert('El nombre de la nota no puede estar vacío.');
+    onCreateNote(parentIdForNewNote, newNoteName.trim());
+    setNewNoteName('');
+    setParentIdForNewNote(null);
+  };
+
+  /**
+   * Renderiza recursivamente el sistema de archivos como una lista de carpetas y notas.
+   * @param items - Lista de ítems (carpetas o notas) a renderizar.
+   * @returns {JSX.Element} - Lista no ordenada de ítems.
+   */
+  const renderFileSystem = (items: FileSystemItem[]) => {
     return (
-      <ul style={{ listStyleType: 'none', paddingLeft: parentId ? '20px' : '0' }}>
+      <ul className="file-system-list">
         {items.map(item => (
-          <li key={item.id}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              {item.type === 'folder' ? (
-                <>
-                  <span
-                    onClick={() => toggleFolder(item.id)}
-                    style={{ cursor: 'pointer', marginRight: '5px' }}
-                  >
-                    {expandedFolders.has(item.id) ? '📂' : '📁'}
-                  </span>
-                  <span onClick={() => toggleFolder(item.id)} style={{ cursor: 'pointer' }}>
-                    {item.name}
-                  </span>
-                </>
-              ) : (
-                <span
-                  onClick={() => onSelectNote(item)}
-                  style={{ cursor: 'pointer', marginLeft: '20px' }}
+          <li key={item.id} className="file-system-item">
+            <div className="item-header">
+              <div className="item-info">
+                {item.type === 'folder' ? (
+                  <>
+                    <span
+                      onClick={() => toggleFolder(item.id)}
+                      className="folder-icon"
+                    >
+                      {expandedFolders.has(item.id) ? '📂' : '📁'}
+                    </span>
+                    {renamingItemId === item.id ? (
+                      <input
+                        type="text"
+                        value={renamingItemName}
+                        onChange={(e) => setRenamingItemName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleRename(item.id);
+                          }
+                        }}
+                        onBlur={() => cancelRename()}
+                        autoFocus
+                        className="rename-input"
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => startRename(item.id, item.name)}
+                        className="item-name"
+                      >
+                        {item.name}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <span
+                      onClick={() => onSelectNote(item)}
+                      className="note-icon"
+                    >
+                      📝
+                    </span>
+                    {renamingItemId === item.id && (
+                      <input
+                        type="text"
+                        value={renamingItemName}
+                        onChange={(e) => setRenamingItemName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleRename(item.id);
+                          }
+                        }}
+                        onBlur={() => cancelRename()}
+                        autoFocus
+                        className="rename-input"
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+              <div className="item-actions">
+                <button
+                  onClick={() => onDeleteItem(item.id)}
+                  className="action-button delete-button"
                 >
-                  📝 {item.name}
-                </span>
-              )}
+                  🗑️
+                </button>
+                <button
+                  onClick={() => startRename(item.id, item.name)}
+                  className="action-button rename-button"
+                >
+                  ✏️
+                </button>
+              </div>
             </div>
+
             {item.type === 'folder' && expandedFolders.has(item.id) && (
               <>
-                {renderFileSystem(item.children, item.id)}
+                {renderFileSystem(item.children)}
                 {/* Botones para crear carpetas y notas dentro de la carpeta */}
-                <div style={{ marginLeft: '20px', marginTop: '5px' }}>
-                  <button onClick={() => setParentIdForNewFolder(item.id)}>+ Carpeta</button>
-                  <button onClick={() => setParentIdForNewNote(item.id)} style={{ marginLeft: '5px' }}>
+                <div className="create-buttons">
+                  <button onClick={() => setParentIdForNewFolder(item.id)} className="create-button">
+                    + Carpeta
+                  </button>
+                  <button onClick={() => setParentIdForNewNote(item.id)} className="create-button">
                     + Nota
                   </button>
                 </div>
@@ -78,32 +198,16 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
     );
   };
 
-  // Función para manejar la creación de carpetas
-  const handleCreateFolder = () => {
-    if (!newFolderName.trim()) return alert('El nombre de la carpeta no puede estar vacío.');
-    onCreateFolder(parentIdForNewFolder, newFolderName.trim());
-    setNewFolderName('');
-    setParentIdForNewFolder(null);
-  };
-
-  // Función para manejar la creación de notas
-  const handleCreateNote = () => {
-    if (!newNoteName.trim()) return alert('El nombre de la nota no puede estar vacío.');
-    onCreateNote(parentIdForNewNote, newNoteName.trim());
-    setNewNoteName('');
-    setParentIdForNewNote(null);
-  };
-
   return (
-    <div>
-      <h2>Explorador de Archivos</h2>
+    <div className="file-explorer">
+      <h2 className="section-title">Explorador de Archivos</h2>
 
       {/* Renderizar el sistema de archivos */}
       {renderFileSystem(fileSystem)}
 
       {/* Formulario para crear una nueva carpeta en el nivel raíz */}
-      <div style={{ marginTop: '20px' }}>
-        <h3>Crear Nueva Carpeta</h3>
+      <div className="create-form">
+        <h3 className="form-title">Crear Nueva Carpeta</h3>
         <input
           type="text"
           placeholder="Nombre de la carpeta"
@@ -111,19 +215,19 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
           onChange={e => setNewFolderName(e.target.value)}
           onKeyDown={e => {
             if (e.key === 'Enter') {
-              handleCreateFolder();
+              handleCreateFolderClick();
             }
           }}
-          style={{ padding: '5px', width: '70%', marginRight: '5px' }}
+          className="input-field"
         />
-        <button onClick={handleCreateFolder} style={{ padding: '5px 10px' }}>
+        <button onClick={handleCreateFolderClick} className="create-button">
           Crear Carpeta
         </button>
       </div>
 
       {/* Formulario para crear una nueva nota en el nivel raíz */}
-      <div style={{ marginTop: '10px' }}>
-        <h3>Crear Nueva Nota</h3>
+      <div className="create-form">
+        <h3 className="form-title">Crear Nueva Nota</h3>
         <input
           type="text"
           placeholder="Nombre de la nota"
@@ -131,20 +235,20 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
           onChange={e => setNewNoteName(e.target.value)}
           onKeyDown={e => {
             if (e.key === 'Enter') {
-              handleCreateNote();
+              handleCreateNoteClick();
             }
           }}
-          style={{ padding: '5px', width: '70%', marginRight: '5px' }}
+          className="input-field"
         />
-        <button onClick={handleCreateNote} style={{ padding: '5px 10px' }}>
+        <button onClick={handleCreateNoteClick} className="create-button">
           Crear Nota
         </button>
       </div>
 
       {/* Formularios para crear carpetas y notas dentro de carpetas */}
       {parentIdForNewFolder && (
-        <div style={{ marginTop: '10px' }}>
-          <h3>Crear Carpeta en la Carpeta Seleccionada</h3>
+        <div className="create-form nested">
+          <h3 className="form-title">Crear Carpeta en la Carpeta Seleccionada</h3>
           <input
             type="text"
             placeholder="Nombre de la carpeta"
@@ -152,23 +256,23 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
             onChange={e => setNewFolderName(e.target.value)}
             onKeyDown={e => {
               if (e.key === 'Enter') {
-                handleCreateFolder();
+                handleCreateFolderClick();
               }
             }}
-            style={{ padding: '5px', width: '70%', marginRight: '5px' }}
+            className="input-field"
           />
-          <button onClick={handleCreateFolder} style={{ padding: '5px 10px' }}>
+          <button onClick={handleCreateFolderClick} className="create-button">
             Crear Carpeta
           </button>
-          <button onClick={() => setParentIdForNewFolder(null)} style={{ marginLeft: '5px' }}>
+          <button onClick={() => setParentIdForNewFolder(null)} className="cancel-button">
             Cancelar
           </button>
         </div>
       )}
 
       {parentIdForNewNote && (
-        <div style={{ marginTop: '10px' }}>
-          <h3>Crear Nota en la Carpeta Seleccionada</h3>
+        <div className="create-form nested">
+          <h3 className="form-title">Crear Nota en la Carpeta Seleccionada</h3>
           <input
             type="text"
             placeholder="Nombre de la nota"
@@ -176,15 +280,15 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
             onChange={e => setNewNoteName(e.target.value)}
             onKeyDown={e => {
               if (e.key === 'Enter') {
-                handleCreateNote();
+                handleCreateNoteClick();
               }
             }}
-            style={{ padding: '5px', width: '70%', marginRight: '5px' }}
+            className="input-field"
           />
-          <button onClick={handleCreateNote} style={{ padding: '5px 10px' }}>
+          <button onClick={handleCreateNoteClick} className="create-button">
             Crear Nota
           </button>
-          <button onClick={() => setParentIdForNewNote(null)} style={{ marginLeft: '5px' }}>
+          <button onClick={() => setParentIdForNewNote(null)} className="cancel-button">
             Cancelar
           </button>
         </div>

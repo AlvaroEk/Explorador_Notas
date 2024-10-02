@@ -1,4 +1,5 @@
 // src/types.ts
+
 export interface FileBase {
     id: string;
     name: string;
