@@ -1,0 +1,42 @@
+.note-editor {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white; /* Fondo blanco para el panel de edición */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+    padding: 20px;
+    z-index: 1000; /* Para asegurarse de que esté por encima de otros elementos */
+    width: 80%; /* Ajustar según sea necesario */
+    max-width: 600px; /* Tamaño máximo del editor */
+  }
+  
+  .editor-title {
+    font-size: 1.5em; /* Tamaño del título */
+    margin-bottom: 20px; /* Espacio debajo del título */
+  }
+  
+  .editor-buttons {
+    display: flex;
+    justify-content: space-between; /* Espaciado entre los botones */
+    margin-top: 20px; /* Espacio arriba de los botones */
+  }
+  
+  .save-button, .cancel-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .save-button {
+    background-color: #4CAF50; /* Color verde para guardar */
+    color: white;
+  }
+  
+  .cancel-button {
+    background-color: #f44336; /* Color rojo para cancelar */
+    color: white;
+  }
+  

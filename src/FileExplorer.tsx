@@ -1,7 +1,7 @@
 // src/FileExplorer.tsx
-
 import React, { useState } from 'react';
 import { FileSystemItem, Folder, Note } from './types';
+import './FileExplorer.css';
 
 interface FileExplorerProps {
   fileSystem: FileSystemItem[];
@@ -144,7 +144,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
                     >
                       📝
                     </span>
-                    {renamingItemId === item.id && (
+                    {renamingItemId === item.id ? (
                       <input
                         type="text"
                         value={renamingItemName}
@@ -158,6 +158,13 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
                         autoFocus
                         className="rename-input"
                       />
+                    ) : (
+                      <span
+                        onDoubleClick={() => startRename(item.id, item.name)}
+                        className="item-name" // Agregar aquí para que el nombre se muestre
+                      >
+                        {item.name} {/* Agregar nombre de la nota */}
+                      </span>
                     )}
                   </>
                 )}
@@ -264,12 +271,8 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
           <button onClick={handleCreateFolderClick} className="create-button">
             Crear Carpeta
           </button>
-          <button onClick={() => setParentIdForNewFolder(null)} className="cancel-button">
-            Cancelar
-          </button>
         </div>
       )}
-
       {parentIdForNewNote && (
         <div className="create-form nested">
           <h3 className="form-title">Crear Nota en la Carpeta Seleccionada</h3>
@@ -287,9 +290,6 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
           />
           <button onClick={handleCreateNoteClick} className="create-button">
             Crear Nota
-          </button>
-          <button onClick={() => setParentIdForNewNote(null)} className="cancel-button">
-            Cancelar
           </button>
         </div>
       )}

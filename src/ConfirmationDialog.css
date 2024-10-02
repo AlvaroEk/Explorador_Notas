@@ -1,0 +1,63 @@
+/* Archivo: ConfirmationDialog.css */
+
+.confirmation-dialog-overlay {
+    position: fixed; /* Fijo en toda la pantalla */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    display: flex; /* Para centrar el contenido */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
+}
+
+.confirmation-dialog {
+    background-color: #f9ebf9; /* Fondo rosa pastel */
+    padding: 20px; /* Espaciado interno */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+    text-align: center; /* Centrar texto */
+}
+
+.confirmation-dialog p {
+    margin-bottom: 20px; /* Espacio inferior para el mensaje */
+    color: #4b3e75; /* Color de texto pastel */
+    font-size: 18px; /* Tamaño de fuente */
+}
+
+.dialog-buttons {
+    display: flex; /* Flexbox para alinear los botones */
+    justify-content: space-around; /* Espaciado entre botones */
+}
+
+.confirm-button {
+    background-color: #c5e1a5; /* Color verde pastel */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    color: #388e3c; /* Color de texto oscuro */
+    cursor: pointer; /* Cambiar cursor al pasar */
+    padding: 10px 20px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de fuente */
+    transition: background-color 0.2s; /* Transición suave */
+}
+
+.confirm-button:hover {
+    background-color: #a5d6a7; /* Color al pasar el ratón */
+}
+
+.cancelar-button {
+    background-color: #ffab91; /* Color naranja pastel */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    color: #d32f2f; /* Color de texto oscuro */
+    cursor: pointer; /* Cambiar cursor al pasar */
+    padding: 10px 20px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de fuente */
+    transition: background-color 0.2s; /* Transición suave */
+}
+
+.cancelar-button:hover {
+    background-color: #ff8a65; /* Color al pasar el ratón */
+}

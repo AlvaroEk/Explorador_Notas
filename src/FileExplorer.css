@@ -1,0 +1,159 @@
+/* Archivo: styles.css o tu archivo de estilos correspondiente */
+
+.file-explorer {
+    background-color: #e4d7f5; /* Fondo morado pastel */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+  
+.section-title {
+    color: #d26f97; /* Color rosa pastel */
+    font-size: 28px; /* Aumentado a 28px */
+    margin-bottom: 15px;
+}
+  
+.file-system-list {
+    list-style-type: none; /* Sin puntos de la lista */
+    padding: 0; /* Sin relleno */
+}
+  
+.file-system-item {
+    margin: 10px 0; /* Espaciado entre ítems */
+    padding: 10px;
+    background-color: #f9ebf9; /* Fondo blanco para cada ítem */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.2s; /* Transición suave */
+}
+  
+.file-system-item:hover {
+    background-color: #ffccf2; /* Color de fondo al pasar el ratón */
+}
+  
+.item-header {
+    display: flex; /* Flexbox para alinear contenido */
+    justify-content: space-between; /* Espaciado entre los elementos */
+    align-items: center; /* Centrar verticalmente */
+}
+  
+.item-info {
+    display: flex;
+    align-items: center; /* Centrar iconos y texto */
+}
+  
+.folder-icon,
+.note-icon {
+    cursor: pointer; /* Cambiar el cursor al pasar sobre el icono */
+    margin-right: 8px; /* Espacio entre el icono y el nombre */
+    font-size: 36px; /* Tamaño de icono más grande */
+}
+
+.folder-icon {
+    color: #9c6eae; /* Color morado pastel para el icono de carpeta */
+}
+  
+.note-icon {
+    color: #f48fb1; /* Color rosa pastel para el icono de nota */
+}
+  
+.item-name {
+    font-weight: bold; /* Negrita para el nombre */
+    color: #333; /* Color de texto */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre el nombre */
+}
+  
+.rename-input {
+    margin-left: 8px; /* Espacio entre icono y campo de texto */
+    padding: 4px; /* Relleno del campo de texto */
+    border: 1px solid #ccc; /* Borde suave */
+    border-radius: 4px; /* Bordes redondeados */
+    transition: border-color 0.2s; /* Transición suave para el borde */
+}
+  
+.rename-input:focus {
+    border-color: #d26f97; /* Color de borde al enfocar */
+}
+  
+.item-actions {
+    display: flex; /* Flexbox para los botones de acción */
+    align-items: center; /* Centrar verticalmente los botones */
+}
+  
+.action-button {
+    background-color: #f1c6d7; /* Color de fondo pastel */
+    border: none; /* Sin borde */
+    border-radius: 4px; /* Bordes redondeados */
+    color: #d32f2f; /* Color del texto */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
+    padding: 8px; /* Relleno */
+    margin-left: 5px; /* Espacio entre botones */
+    transition: background-color 0.2s; /* Transición suave */
+    font-size: 24px; /* Tamaño de fuente para botones */
+    display: flex; /* Usar flexbox para centrar contenido */
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+}
+  
+.action-button:hover {
+    background-color: #ffb3c6; /* Color al pasar el ratón */
+}
+  
+.create-buttons {
+    margin-top: 10px; /* Espacio superior para botones de creación */
+}
+  
+.create-button {
+    background-color: #d1c4e9; /* Color de fondo pastel */
+    border: none; /* Sin borde */
+    border-radius: 4px; /* Bordes redondeados */
+    color: #673ab7; /* Color del texto */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
+    padding: 8px 16px; /* Relleno reducido */
+    margin-right: 5px; /* Espacio entre botones */
+    transition: background-color 0.2s; /* Transición suave */
+    font-size: 18px; /* Tamaño de fuente reducido */
+}
+  
+.create-button:hover {
+    background-color: #b39ddb; /* Color al pasar el ratón */
+}
+  
+.cancel-button {
+    background-color: #ffab91; /* Color de fondo pastel */
+    border: none; /* Sin borde */
+    border-radius: 4px; /* Bordes redondeados */
+    color: #d32f2f; /* Color del texto */
+    cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
+    padding: 5px 10px; /* Relleno */
+    margin-left: 5px; /* Espacio entre botones */
+    transition: background-color 0.2s; /* Transición suave */
+}
+  
+.cancel-button:hover {
+    background-color: #ff8a65; /* Color al pasar el ratón */
+}
+  
+.create-form {
+    margin-top: 20px; /* Espacio superior para formularios de creación */
+    padding: 15px; /* Relleno */
+    background-color: #f1c6d7; /* Fondo suave */
+    border-radius: 5px; /* Bordes redondeados */
+}
+  
+.form-title {
+    color: #4b3e75; /* Color de título */
+    margin-bottom: 10px; /* Espacio inferior para el título */
+    font-size: 24px;
+}
+  
+.input-field {
+    width: 100%; /* Ancho completo */
+    padding: 8px; /* Relleno */
+    margin-bottom: 10px; /* Espacio inferior */
+    border: 1px solid #ccc; /* Borde suave */
+    border-radius: 4px; /* Bordes redondeados */
+}
+  
+.input-field:focus {
+    border-color: #d26f97; /* Color de borde al enfocar */
+}

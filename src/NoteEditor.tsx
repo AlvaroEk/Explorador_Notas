@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill'; // Editor de texto enriquecido
 import 'react-quill/dist/quill.snow.css'; // Estilos de Quill
 import { Note } from './types';
+import './NoteEditor.css'; // Asegúrate de que este archivo esté importado
 
 interface NoteEditorProps {
   note: Note | null;
@@ -27,9 +28,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose }) => {
     return <div className="no-note-selected-message">Selecciona una nota para editarla.</div>;
   }
 
-  /**
-   * Guarda los cambios realizados en la nota y cierra el editor.
-   */
+  // Función para guardar los cambios realizados en la nota y cerrar el editor.
   const saveChanges = () => {
     if (!note) return;
     onSave({ ...note, content });
@@ -73,10 +72,10 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose }) => {
       />
       <div className="editor-buttons">
         <button onClick={saveChanges} className="save-button">
-          Guardar Cambios
+            Guardar Cambios
         </button>
         <button onClick={onClose} className="cancel-button">
-          Cancelar
+            Cancelar
         </button>
       </div>
     </div>
