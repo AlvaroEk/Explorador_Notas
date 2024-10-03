@@ -1,5 +1,3 @@
-// src/NoteEditor.tsx
-
 import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill'; // Editor de texto enriquecido
 import 'react-quill/dist/quill.snow.css'; // Estilos de Quill

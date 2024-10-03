@@ -1,5 +1,3 @@
-// src/ConfirmationDialog.tsx
-
 import React from 'react';
 import './ConfirmationDialog.css'; // Asegúrate de crear este archivo de estilos
 

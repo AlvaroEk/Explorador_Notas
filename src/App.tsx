@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import React, { useState, useEffect } from 'react';
 import FileExplorer from './FileExplorer';
 import NoteEditor from './NoteEditor';

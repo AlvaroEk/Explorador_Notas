@@ -1,4 +1,3 @@
-// src/FileExplorer.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { FileSystemItem, Note } from './types';
 import './FileExplorer.css';
