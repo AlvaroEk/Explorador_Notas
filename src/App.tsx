@@ -206,7 +206,7 @@ const App: React.FC = () => {
             onClose={() => setSelectedNote(null)} // Para cerrar sin guardar
           />
         ) : (
-          <div className="no-note-selected">Selecciona una nota para editarla.</div>
+          <div className="no-note-selected"></div>
         )}
       </div>
 

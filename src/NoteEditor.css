@@ -31,12 +31,12 @@
   }
   
   .save-button {
-    background-color: #4CAF50; /* Color verde para guardar */
+    background-color: #a5d6a7; /* Color verde para guardar */
     color: white;
   }
   
   .cancel-button {
-    background-color: #f44336; /* Color rojo para cancelar */
+    background-color: #ffab91; /* Color rojo para cancelar */
     color: white;
   }
   

@@ -1,6 +1,6 @@
 // src/FileExplorer.tsx
-import React, { useState } from 'react';
-import { FileSystemItem, Folder, Note } from './types';
+import React, { useState, useRef, useEffect } from 'react';
+import { FileSystemItem, Note } from './types';
 import './FileExplorer.css';
 
 interface FileExplorerProps {
@@ -20,6 +20,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   onDeleteItem,
   onRenameItem,
 }) => {
+  // Estados existentes
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [parentIdForNewFolder, setParentIdForNewFolder] = useState<string | null>(null);
   const [parentIdForNewNote, setParentIdForNewNote] = useState<string | null>(null);
@@ -27,6 +28,44 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   const [newNoteName, setNewNoteName] = useState('');
   const [renamingItemId, setRenamingItemId] = useState<string | null>(null);
   const [renamingItemName, setRenamingItemName] = useState<string>('');
+
+  // Estados para arrastrar y mover el explorador
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const dragStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const explorerRef = useRef<HTMLDivElement>(null);
+
+  // Manejadores de eventos para el arrastre
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Asegurarse de que el clic no sea en un botón o input
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'BUTTON' || target.tagName === 'INPUT') {
+      return;
+    }
+    setIsDragging(true);
+    dragStart.current = { x: e.clientX - position.x, y: e.clientY - position.y };
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+    setPosition({
+      x: e.clientX - dragStart.current.x,
+      y: e.clientY - dragStart.current.y,
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
 
   /**
    * Alterna la expansión de una carpeta en el explorador.
@@ -161,9 +200,9 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
                     ) : (
                       <span
                         onDoubleClick={() => startRename(item.id, item.name)}
-                        className="item-name" // Agregar aquí para que el nombre se muestre
+                        className="item-name"
                       >
-                        {item.name} {/* Agregar nombre de la nota */}
+                        {item.name}
                       </span>
                     )}
                   </>
@@ -206,7 +245,12 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   };
 
   return (
-    <div className="file-explorer">
+    <div
+      ref={explorerRef}
+      className="file-explorer"
+      onMouseDown={handleMouseDown}
+      style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
+    >
       <h2 className="section-title">Explorador de Archivos</h2>
 
       {/* Renderizar el sistema de archivos */}
